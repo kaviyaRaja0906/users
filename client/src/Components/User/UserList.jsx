@@ -154,7 +154,7 @@ async function updateHandler(id) {
               <span>Role : {user.role}</span>
               <div className={styles.user__btn}>
               {
-                permissions.includes("edit") &&
+               permissions && permissions.includes("edit") &&
                 <button className={styles.edit} onClick={openModal}><GrEdit/> Edit</button>
               }
                 <Modal
@@ -208,7 +208,7 @@ async function updateHandler(id) {
                  </div>
               </Modal>
               {
-                permissions.includes("delete") &&
+                permissions && permissions.includes("delete") &&
                 <button className={styles.delete} onClick={() => handleDelete(user._id)}><RiDeleteBin6Line/> Delete</button>
               }
               </div>
