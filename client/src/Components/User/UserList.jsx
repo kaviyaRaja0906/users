@@ -31,7 +31,7 @@ const initialValues ={
   error:"",
 }
 
-function UserList({permissions}) {
+function UserList({permissions, superAdmin}) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [user, setUser] = useState(initialValues);
   const [options, setOptions] = useState([]);
@@ -61,7 +61,7 @@ function UserList({permissions}) {
         const response = await axios.get("http://localhost:5000/api/roles"); 
         const fetchedRoles = response.data; 
         setOptions(fetchedRoles);
-        console.log(options);
+        console.log(permissions);
       } catch (error) {
         console.error("Error fetching roles:", error);
       }
@@ -154,7 +154,65 @@ async function updateHandler(id) {
               <span>Role : {user.role}</span>
               <div className={styles.user__btn}>
               {
-                permissions.includes("edit") &&
+                superAdmin ? (
+                <div className={styles.btn__group}>
+                <button className={styles.edit} onClick={openModal}><GrEdit/> Edit</button>
+                <Modal
+                isOpen={modalIsOpen}
+                onAfterOpen={afterOpenModal}
+                onRequestClose={closeModal}
+                style={customStyles}
+                contentLabel="Example Modal"
+               > 
+                 <div className={styles.modal}>
+                 <h1>Edit Form</h1>
+                    <Formik
+                         enableReinitialize
+                         initialValues={{
+                          name,
+                          email,
+                          password,
+                          role,
+                          success,
+                           error,
+                         }}
+                         className={styles.form}
+                         validationSchema={EditValidation}
+                        >
+                            <Form>
+                             <LoginInput 
+                              type="text"
+                              name="name"
+                              icon="user" 
+                              placeholder="Full Name"
+                              onChange={handleChange}
+                              />
+                              <LoginInput 
+                              type="email"
+                              name="email"
+                              icon="email" 
+                              placeholder="Email address"
+                              onChange={handleChange}
+                              />
+                              <SelectInput icon="user" name="role" placeholder="Role" onChange={handleChange}
+                                options={options.map((option) => ({
+                                value: option.role, 
+                                label: option.role, 
+                              }))} />
+                              <button type="submit" onClick={() => updateHandler(user._id)} className={styles.update}>Update</button>
+                            </Form>
+                        </Formik>
+                        <div>{success && <span className={styles.success}>{success}</span>}</div>
+                        <div>{error && <span className={styles.error}>{error}</span>}</div>
+
+                 </div>
+                </Modal>
+                <button className={styles.delete} onClick={() => handleDelete(user._id)}><RiDeleteBin6Line/> Delete</button>
+                </div>
+                ) :(
+                <div className={styles.btn__group}>
+              {
+                permissions && permissions.includes("edit") &&
                 <button className={styles.edit} onClick={openModal}><GrEdit/> Edit</button>
               }
                 <Modal
@@ -206,11 +264,15 @@ async function updateHandler(id) {
                         <div>{error && <span className={styles.error}>{error}</span>}</div>
 
                  </div>
-              </Modal>
+                </Modal>
               {
-                permissions.includes("delete") &&
+                permissions && permissions.includes("delete") &&
                 <button className={styles.delete} onClick={() => handleDelete(user._id)}><RiDeleteBin6Line/> Delete</button>
               }
+                </div>
+                )
+              }
+              
               </div>
             </div>
           ))}

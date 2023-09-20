@@ -10,6 +10,7 @@ function Home(){
     const[navToRole, setNavToRole] = useState(true);
     const[navToAddUser, setNavToAddUser] = useState(false);
     const[navToUserList, setNavToUserList] = useState(false);
+    const [superAdmin, setSuperAdmin] = useState(true);
 
     const roleNav =()=>{
       setNavToRole(true);
@@ -51,7 +52,7 @@ function Home(){
              </div>
               {navToRole && <RolePermission/>}
               {navToAddUser && <AddUser/>}
-              {navToUserList && <UserList/>}
+              {navToUserList && <UserList superAdmin={superAdmin}/>}
            </div>
          </div>
       </div>
